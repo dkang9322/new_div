@@ -1,6 +1,9 @@
 module hsvReduce(reset, clk,
 		 two_pixel_vals, // Input two pixel worth of data
-		 two_proc_pixs // Output pixels
+		 two_proc_pixs, // Output pixels
+		 switch_vals,
+		 switch_sels,
+		 change
 		 );
    /*
     This function is a wrapper for the colorReduce pixel written by
@@ -11,6 +14,11 @@ module hsvReduce(reset, clk,
    input [35:0] two_pixel_vals;
    output [35:0] two_proc_pixs;
 
+   input [2:0] 	 switch_vals;
+   input [1:0] 	 switch_sels;
+   input 	 change;
+   
+
    // Input to colorReduce
    wire [23:0] 	 pix1RGB, pix2RGB;
    
@@ -20,9 +28,11 @@ module hsvReduce(reset, clk,
    // Output to colorReduce
    wire [23:0] 	 tRGB1, tRGB2;
    
-   colorReduce hsvRed1(pix1RGB, clk, reset, tRGB1);
+   colorReduce hsvRed1(pix1RGB, clk, reset, change,
+		       switch_sels, switch_vals, tRGB1);
 
-   colorReduce hsvRed2(pix2RGB, clk, reset, tRGB2);
+   colorReduce hsvRed2(pix2RGB, clk, reset, change,
+		       switch_sels, switch_vals, tRGB2);
 
    // We really need to change proc_pixs every other clock cycle
    wire [35:0] 	 two_proc_pixs;

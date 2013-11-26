@@ -44,7 +44,8 @@ module pixProc(reset, clk,
    reg [DAT_DEL:0] dat_del;
 
    hsvReduce hsv_abstr(reset, clk, dat_del[DAT_DEL:DAT_DEL-35],
-		       two_proc_pixs);
+		       two_proc_pixs,
+		       switch_vals, switch_sels, change);
    
    
    
