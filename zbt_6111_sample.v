@@ -20,9 +20,8 @@
 //
 // switch[7] selects between display of NTSC video and test bars
 // switch[6] is used for testing the NTSC decoder
-// switch[1] selects between test bar periods; these are stored to ZBT
-//           during blanking periods
-// switch[0] selects vertical test bars (hardwired; not stored in ZBT)
+// switch [1:0] is used for the color reduction selection
+// switch [7:5] is used for the color reduction value
 //
 //
 // Bug fix: Jonathan P. Mailoa <jpmailoa@mit.edu>
@@ -503,6 +502,7 @@ module zbt_6111_sample(beep, audio_reset_b,
    ntsc_to_zbt n2z (clk, tv_in_line_clock1, fvh, dv, ycrcb,
 		    ntsc_addr, ntsc_data, ntsc_we, switch[6]);
 
+   /* Pattern Generator Code
    // code to write pattern to ZBT memory
    reg [31:0] 	count;
    always @(posedge clk) count <= reset ? 0 : count + 1;
@@ -514,15 +514,16 @@ module zbt_6111_sample(beep, audio_reset_b,
    // mux selecting read/write to memory based on which write-enable is chosen
 
    wire 	sw_ntsc = ~switch[7];
+    */
    //Rational is that hcount[0]=0 -> then pixel value available
    //2 clock cycles later (Edited), originally [1:0] 2'd2
 
    // ZBT bank 0 we/write data
    // Adding condition to we such that check for swtich[3]
    // For processing, we write to ZBT bank 1, always
-   wire 	my_we = sw_ntsc ? (hcount[0]==1'd1) : blank;
-   wire [18:0] 	write_addr = sw_ntsc ? ntsc_addr : vram_pat_addr;
-   wire [35:0] 	write_data = sw_ntsc ? ntsc_data : vpat;
+   wire        my_we = (hcount[0]==1'd1);
+   wire [18:0] 	write_addr = ntsc_addr;
+   wire [35:0] 	write_data = ntsc_data;
 
 //   wire 	write_enable = sw_ntsc ? (my_we & ntsc_we) : my_we;
 //   assign 	vram_addr = write_enable ? write_addr : vram_vga_addr;
@@ -534,7 +535,7 @@ module zbt_6111_sample(beep, audio_reset_b,
    //ZBT bank 1 we/write data
    //Note we are using the same write_addr/write_data as ZBT bank 0
    //Supervisor needs to generate the appropriate write_addr and appropriate delay
-   wire 	my_we1 = switch[3] ? sw_ntsc ? (hcount[0]==1'd1) : blank : 0;
+   wire 	my_we1 = switch[3] ? (hcount[0]==1'd1): 0;
 
    // Pixel Reader
    wire [35:0] 	zbt0_two_pixels;
@@ -576,7 +577,8 @@ module zbt_6111_sample(beep, audio_reset_b,
 
    always @(posedge clk)
      begin
-	pixel <= switch[0] ? {hcount[8:6],5'b0} : vr_pixel;
+	//pixel <= switch[0] ? {hcount[8:6],5'b0} : vr_pixel;
+	pixel <= vr_pixel;
 	b <= blank;
 	hs <= hsync;
 	vs <= vsync;

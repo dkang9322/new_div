@@ -3,7 +3,10 @@ module pixProc(reset, clk,
 	       two_pixel_vals, // Data Input to be processed
 	       write_addr, //Data Address to write in ZBT bank 1
 	       two_proc_pixs, // Processed Pixel
-	       proc_pix_addr
+	       proc_pix_addr,
+	       switch_vals, // switches to choose num_shifts
+	       switch_sels, // switches to choose HSV
+	       change //Button to re-write color
 	       );
    input reset, clk;
    input [10:0] hcount;
@@ -12,6 +15,12 @@ module pixProc(reset, clk,
    input [18:0] write_addr; 
    output [35:0] two_proc_pixs;
    output [18:0] proc_pix_addr;
+
+   input [2:0] 	 switch_vals;
+   input [1:0] 	 switch_sels;
+   input 	 change;
+   
+   
 
    wire [35:0] 	 two_proc_pixs;
    
