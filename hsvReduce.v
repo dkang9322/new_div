@@ -36,7 +36,13 @@ module hsvReduce(reset, clk,
 
    // We really need to change proc_pixs every other clock cycle
    wire [35:0] 	 two_proc_pixs;
+
+   assign two_proc_pixs = {tRGB2[23:18], tRGB2[7:2], tRGB2[15:10], tRGB1[23:18], tRGB1[7:2], tRGB1[15:10]};
+   
+   /* Switched Green and Blue*/
+    /*
    assign two_proc_pixs = {tRGB2[23:18], tRGB2[15:10], tRGB2[7:2], tRGB1[23:18], tRGB1[15:10], tRGB1[7:2]};
+    */
      
    
 endmodule // hsvReduce
